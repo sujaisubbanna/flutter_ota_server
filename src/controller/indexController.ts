@@ -1,16 +1,17 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
-import { init } from '../utils/git';
+import { init, diff, cleanUp } from '../utils/git';
 
 export default async function indexController(fastify: FastifyInstance) {
-  // GET /
   fastify.get("/", async function (
     _request: FastifyRequest,
     reply: FastifyReply
   ) {
     try {
-      const latestCommit = await init('main');
-      console.log(latestCommit);
-      reply.send('OK');
+      const {branch, commit} = _request.query as any;
+      const path = await init(branch);
+      const filesDiff = await diff(path, commit);
+      await cleanUp(path);
+      reply.send(filesDiff);
     }catch(err) {
       console.log(err);
       reply.status(500).send('Internal Server Error');

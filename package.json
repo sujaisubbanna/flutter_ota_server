@@ -13,7 +13,9 @@
     "cross-env": "^7.0.3",
     "cross-spawn": "^7.0.3",
     "diff-match-patch-typescript": "^1.0.8",
+    "dotenv": "^10.0.0",
     "fastify": "^3.19.2",
+    "fastify-env": "^2.1.1",
     "rmfr": "^2.0.0",
     "simple-git": "^2.41.2"
   },

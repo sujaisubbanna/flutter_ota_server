@@ -1,15 +1,18 @@
 import { join } from 'path';
 import simpleGit, { SimpleGit } from 'simple-git';
-import { REPO_URL } from './constants';
 const git: SimpleGit = simpleGit();
 import * as rmfr from 'rmfr';
 import { spawnSafeSync } from './spawnSafe';
 import * as fs from 'fs';
 import { DiffMatchPatch } from 'diff-match-patch-typescript';
 import { FileDiff } from '../models/file-diff.interface';
+import { FastifyError } from 'fastify';
 const diffPatch = new DiffMatchPatch();
 
-export const init = async (branch: string): Promise<string> => {
+export const init = async (branch: string, REPO_URL: string): Promise<string> => {
+    if (REPO_URL.length < 1) {
+        throw FastifyError('Repo URL not found in env');
+    }
     const target = join(__dirname, 'data');
     const remote = REPO_URL;
     await rmfr.default(target);

@@ -2,13 +2,15 @@ import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { init, diff, cleanUp, getFirstCommit } from '../utils/git';
 
 export default async function indexController(fastify: FastifyInstance) {
+  const REPO_URL = process.env.REPO_URL ?? '';
+
   fastify.get("/", async function (
     _request: FastifyRequest,
     reply: FastifyReply
   ) {
     try {
       const { branch, commit } = _request.query as any;
-      const path = await init(branch);
+      const path = await init(branch, REPO_URL);
       const filesDiff = await diff(path, commit);
       await cleanUp(path);
       reply.send(filesDiff);
@@ -24,8 +26,9 @@ export default async function indexController(fastify: FastifyInstance) {
   ) {
     try {
       const { branch } = _request.query as any;
-      const path = await init(branch);
+      const path = await init(branch, REPO_URL);
       const commit = await getFirstCommit(path);
+      await cleanUp(path);
       reply.send(commit);
     } catch (err) {
       console.log(err);
